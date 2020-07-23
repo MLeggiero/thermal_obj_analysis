@@ -1,28 +1,9 @@
-function output = combined_formula_power_output_no_input(obj_file, texture_file, parameters)
+function output = combined_formula_power_output_no_input(obj_file, texture_file, parameters, obj)
 
-%---- Parameters to Edit Below -----%
-%Filenames:
-%obj_file = "Newest_Rogers_box_3_20_2020.obj";
-%texture_file = "Newest_Rogers_box_3_20_2020_new_model_2.jpg";
+obj = obj;
 
 obj_file = string(obj_file);
 texture_file = string(texture_file);
-
-%Distance Scaling (real distance in meters):
-% obj_distance = 4;
-% real_distance = 0.23;
-% 
-% %Temperature Scales (Both in Celcius):
-% toLow = 5;
-% toHigh = 45;
-% 
-% %Stefan-Boltzman Law:
-% Tamb = 22.1; %Ambient Temp - in Celcius -- 1.65
-% Emissivity = 0.95; %Might be irrelevant if already accounted for in FLIR Tools
-% wall_ang = pi/2; %Angle between wall and ground in radians
-% T_dew_point = 5.5; %dew point temperature in celcius at the time of data collection
-% T_ground = 22.1; %weighted average ground temperature near walls (in celcius)
-%%---- Parameters to Edit Above ----- %%
 
 toLow = parameters(1);
 toHigh = parameters(2);
@@ -35,76 +16,19 @@ obj_distance = parameters(8);
 real_distance = parameters(9);
 
 tic
-progress = waitbar(0, 'Reading OBJ File...');
 
-% obj = evalin('base','obj'); %USE IF OBJ IS ALREADY IN WORKSPACE -- MAKE SURE TO COMMENT OUT LINE 21
+progress = waitbar(0, 'Creating Face/Texture/Vertex Vectors...');
 
-%%
-% obj = readObj(fname);
-%
-% This function parses wavefront object data
-% It reads the mesh vertices, texture coordinates, normal coordinates
-% and face definitions(grouped by number of vertices) in a .obj file
-%
-%
-% INPUT: fname - wavefront object file full path
-%
-% OUTPUT: obj.v - mesh vertices
-%       : obj.vt - texture coordinates
-%       : obj.vn - normal coordinates
-%       : obj.f - face definition assuming faces are made of of 3 vertices
-%
-% Bernard Abayowa, Tec^Edge
-% 11/8/07
-% ---
-% Returns obj.f.a which contains area values of given faces
-%
-% Mark Leggiero
-% 5/21/2019
-
-% set up field types
-v = []; vt = []; vn = []; f.v = []; f.vt = []; f.vn = [];
-
-fid = fopen(obj_file);
-
-% parse .obj file
-while 1
-    tline = fgetl(fid);
-    if ~ischar(tline),   break,   end  % exit at end of file
-    ln = sscanf(tline,'%s',1); % line type
-    %disp(ln)
-    switch ln
-        case 'v'   % mesh vertexs
-            v = [v; sscanf(tline(2:end),'%f')'];
-        case 'vt'  % texture coordinate
-            vt = [vt; sscanf(tline(3:end),'%f')'];
-        case 'vn'  % normal coordinate
-            vn = [vn; sscanf(tline(3:end),'%f')'];
-        case 'f'   % face definition
-            fv = []; fvt = []; fvn = [];
-            str = textscan(tline(2:end),'%s'); str = str{1};
-            
-            nf = length(findstr(str{1},'/')); % number of fields with this face vertices
-            
-            
-            [tok str] = strtok(str,'//');     % vertex only
-            for k = 1:length(tok) fv = [fv str2num(tok{k})]; end
-            
-            if (nf > 0)
-                [tok str] = strtok(str,'//');   % add texture coordinates
-                for k = 1:length(tok) fvt = [fvt str2num(tok{k})]; end
-            end
-            if (nf > 1)
-                [tok str] = strtok(str,'//');   % add normal coordinates
-                for k = 1:length(tok) fvn = [fvn str2num(tok{k})]; end
-            end
-            f.v = [f.v; fv]; f.vt = [f.vt; fvt]; f.vn = [f.vn; fvn];
-    end
-end
-fclose(fid);
-
-% set up matlab object
-obj.v = v; obj.vt = vt; obj.vn = vn; obj.f = f;
+objReadTime = toc;
+imageMat = imread(texture_file);
+imageMat = imageMat(:,:,1);
+[imRow, imCol] = size(imageMat);
+pts = [];
+[verts, ~] = size(obj.v);
+vt_tex = obj.vt;
+v = obj.v;
+vf = obj.f.v;
+vt = obj.f.vt;
 
 % Triangle Area Formula Addition
 % by Mark Leggiero - 5/21/2019
@@ -133,20 +57,7 @@ for i = (1:facesSize)
     a(i) = area;
     obj.f.a = a;
 end
-%%
 
-waitbar(0.35,progress, 'Creating Face/Texture/Vertex Vectors...');
-
-objReadTime = toc;
-imageMat = imread(texture_file);
-imageMat = imageMat(:,:,1);
-[imRow, imCol] = size(imageMat);
-pts = [];
-[verts, ~] = size(obj.v);
-vt_tex = obj.vt;
-v = obj.v;
-vf = obj.f.v;
-vt = obj.f.vt;
 areas = obj.f.a;
 [vfsize, ~] = size(vf);
 powers = zeros(1, vfsize);
