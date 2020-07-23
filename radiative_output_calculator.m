@@ -84,7 +84,6 @@ waitbar(0.75,progress, 'Creating Face/Texture/Vertex Vectors...');
 for i = (1:verts)
     vX = round(v(i,1),2); vY = round(v(i,2),2); vZ = round(v(i,3),2);
     
-    %% Old OBJ Temps code - for finding temps vector %%
     vertMat = obj.v;
     roundedOBJ = vertMat(:,[1:3]);
     roundedOBJ = round(roundedOBJ,2);
@@ -154,13 +153,6 @@ parfor i = 1:vfsize %Calculating power output for each triangle face, and compil
     y_max = max(ypts);
     y_min = min(ypts);
     inner_pixels = zeros(1,1);
-%     for i1 = y_min:y_max
-%         x_min = min(face_vals(face_vals(:,4) == i1,3));
-%         x_max = max(face_vals(face_vals(:,4) == i1,3));
-%         for j = x_min:x_max
-%             inner_pixels(1,round((i1-y_min)*(y_max-y_min + x_max-x_min))) = imageMat(i1,j);
-%         end
-%     end
     
     for i1 = y_min:y_max
     x_min = min(face_vals(face_vals(:,4) == i1,3));
@@ -187,23 +179,7 @@ end
     %Sum powers and increase index
     powers(i) = pw1;
     sb_powers(i) = pw0;
-    
-%         if i == 1
-%        waitbar(i/vfsize,progress, sprintf("Calculating Power Output... %.0f Faces",vfsize));
-%         elseif i == round(vfsize/4)
-%        %time_f = toc;   change_time = round(time_f - time_o,1);
-%        waitbar(i/vfsize,progress, sprintf("Calculating Power Output... %.0f Faces",vfsize));
-%         elseif i == round(vfsize/3)
-%        %time_f = toc;   change_time = round(time_f - time_o,1);
-%        waitbar(i/vfsize,progress, sprintf("Calculating Power Output... %.0f Faces",vfsize));
-%        elseif i == round(vfsize/2)
-%        %time_f = toc;   change_time = round(time_f - time_o,1);
-%        waitbar(i/vfsize,progress, sprintf("Calculating Power Output... %.0f Faces",vfsize));
-%        elseif i == round(vfsize)
-%        %time_f = toc;   change_time = round(time_f - time_o,1);
-%        waitbar(i/vfsize,progress, sprintf("Calculating Power Output... %.0f Faces",vfsize));
-%         end
-    
+       
 end
 waitbar(1,progress,'Calculation Complete');
 
@@ -220,6 +196,7 @@ faulty_Powers = length(col);
 if faulty_Powers >= (0.01*length(areas))
     fprintf("WARNING: %3.1f %% of faces have been excluded from power calculation.\n", 100*faulty_Powers/length(areas));
 end
+
 sb_powers(row,col) = 0;
 
 %Sum matrices of power output
