@@ -25,11 +25,11 @@ function output = radiative_output_calculator(obj_file, texture_file, parameters
 % texture_file
 %   Description: name of the .jpg file used for the thermal model texture
 %   Type: string/char
-%   Example: "texture.jpg"
+%   Example: "thermal_model_texture.jpg"
 %
 % parameters
 %   Description: array of calculation parameters (see lines 60-68) for radiaitve power output
-%       formulas (see lines 222-244). 
+%       formulas (see lines 222-244).
 %       Contains (in order) the lowest temperature in the
 %       thermal image (in Celcius), the highest temperature in the thermal image (in Celcius), the
 %       ambient temperature (in Celcius), the average material emissivity (values between 0-1), the
@@ -44,12 +44,12 @@ function output = radiative_output_calculator(obj_file, texture_file, parameters
 %       containing the obj vertices (obj.v), vertex textures (obj.vt), faces (obj.f), vertex face
 %       reference (obj.f.v), and texture face reference (obj.f.vt)
 %   Type: struct
-%   Example: obj, obj.
+%   Example: obj, obj.v, obj.vt, obj.f, obj.f.v, obj.f.vt
 %
 % OUTPUTS:
 %
 % output
-%   Description: table of input values (for use in later calculations), 
+%   Description: table of input values (for use in later calculations),
 %       and output values from the power output models.
 
 obj = obj;
@@ -57,11 +57,12 @@ obj = obj;
 obj_file = string(obj_file);
 texture_file = string(texture_file);
 
+%Extracting paramters from the 'parameters' input array
 toLow = parameters(1);
 toHigh = parameters(2);
 Tamb = parameters(3);
 Emissivity = parameters(4);
-wall_ang = parameters(5);
+wall_ang = deg2rad(parameters(5));
 T_dew_point = parameters(6);
 T_ground = parameters(7);
 obj_distance = parameters(8);
@@ -81,19 +82,31 @@ vt_tex = obj.vt;
 v = obj.v;
 vf = obj.f.v;
 vt = obj.f.vt;
+vn = obj.f.vn;
+vec_norm = obj.vn;
 
 % Create vector (obj.f.a) of areas for each face
-faces = obj.f.v;
 vert = obj.v;
-[facesSize, ~] = size(faces);
+[facesSize, ~] = size(vf);
 mult = real_distance/obj_distance;
 
-a = zeros(1,length(facesSize));
+a = zeros(1,facesSize);
+angle_z = ones(1,facesSize);
 for i = (1:facesSize)
     %Find coordinate points associated with each triangle
-    point1 = vert(faces(i,1),[1:3]);
-    point2 = vert(faces(i,2),[1:3]);
-    point3 = vert(faces(i,3),[1:3]);
+    point1 = vert(vf(i,1),[1:3]);
+    point2 = vert(vf(i,2),[1:3]);
+    point3 = vert(vf(i,3),[1:3]);
+    
+    
+    %Calculate local wall angles for oriented model
+    if isnan(wall_ang)
+        av_norm = cross(point1 - point2,  point3 - point2);
+        norm_mag = sqrt((point2(3) - point1(3))^2+(point3(3) - point2(3))^2);
+        angle_z(i) = real(acos(av_norm(3)/norm_mag));
+    else
+        angle_z(i) = angle_z(i) * wall_ang;
+    end
     
     %3D Distance formula
     side1 = ((point2(1) - point1(1))^2 + (point2(2) - point1(2))^2 + (point2(3) - point1(3))^2)^(1/2);
@@ -116,6 +129,8 @@ areas = obj.f.a;
 powers = zeros(1, vfsize);
 powers_b = zeros(1, vfsize);
 sb_powers = zeros(1, vfsize);
+m1_powers = zeros(1, vfsize);
+m2_powers = zeros(1, vfsize);
 m3_powers = zeros(1, vfsize);
 
 waitbar(0.75,progress, 'Creating Face/Texture/Vertex Vectors...');
@@ -145,10 +160,10 @@ for i = (1:verts)
         
         [objTrow, ~] = size(obj.vt);
         %Creates the matrix with verts with reference #s
-        objTec = [(1:objTrow)', obj.vt(1:end,1:2)]; 
+        objTec = [(1:objTrow)', obj.vt(1:end,1:2)];
         [imageRow, imageCol] = size(imageMat);
         
-         %gets the second column of the vt matrix = height index
+        %gets the second column of the vt matrix = height index
         digNumheight = abs(round(imageRow * objTec(myRow,2)));
         if digNumheight > imageRow
             digNumheight = digNumheight - 1;
@@ -158,7 +173,7 @@ for i = (1:verts)
         end
         
         %gets the third column of the vt matrix = width index
-        digNumwidth = abs(round(imageCol * objTec(myRow,3))); 
+        digNumwidth = abs(round(imageCol * objTec(myRow,3)));
         if digNumwidth > imageCol
             digNumwidth = digNumwidth - 1;
         end
@@ -166,7 +181,7 @@ for i = (1:verts)
             digNumwidth = 1;
         end
         %finds digNum pixel(brightness) in image
-        meanDigNum(cont) =  imageMat(digNumheight, digNumwidth); 
+        meanDigNum(cont) =  imageMat(digNumheight, digNumwidth);
     end
     meanDigNum = round(mean(meanDigNum));
     temp1 = (meanDigNum) * (toHigh - toLow) / (255) + toLow + 273.15;
@@ -217,23 +232,21 @@ parfor i = 1:vfsize %Calculating power output for each triangle face, and compil
     pw0 = areas(i) * Emissivity * sigma * (newTemp^4 - Tamb^4);
     
     %Sum powers and increase index
-    sb_powers(i) = pw0;
+    m1_powers(i) = pw0;
     
     %% NEW FORMULA - Model 2%%
     Em_sky = 0.787 + 0.764 * log(T_dew_point/273.15);
     T_sky = (Em_sky)^(1/4) * Tamb;
-    h_r = sigma*(newTemp + T_sky) * (newTemp^2 + T_sky^2);
-    h_r2 = 4*sigma*newTemp^3
-    pw1 = areas(i)*Emissivity*h_r*(newTemp-(0.5*(1-cos(wall_ang))*T_ground + (1-0.5*(1-cos(wall_ang)))*T_sky));
-    pw1b = areas(i)*Emissivity*h_r2*(newTemp-(0.5*(1-cos(wall_ang))*T_ground + (1-0.5*(1-cos(wall_ang)))*T_sky));
+    h_r = 4*sigma*newTemp^3
+    pw1 = areas(i)*Emissivity*h_r*(newTemp-(0.5*(1-cos(angle_z(i)))*T_ground + (1-0.5*(1-cos(angle_z(i))))*T_sky));
+    
     %Sum powers and increase index
-    powers(i) = pw1;
-    powers_b(i) = pw1b;
+    m2_powers(i) = pw1;
     
     %% Model 3 %%
-    F_ground = 0.5*(1-cos(wall_ang));
-    F_sky = 0.5*(1+cos(wall_ang));
-    Beta = sqrt(0.5*(1+cos(wall_ang)));
+    F_ground = 0.5*(1-cos(angle_z(i)));
+    F_sky = 0.5*(1+cos(angle_z(i)));
+    Beta = sqrt(0.5*(1+cos(angle_z(i))));
     
     h_ground = (Emissivity*sigma*F_ground*(newTemp^4-Tamb^4))/(newTemp-Tamb);
     h_sky = (Emissivity*sigma*F_sky*Beta*(newTemp^4-T_sky^4))/(newTemp-T_sky);
@@ -241,6 +254,7 @@ parfor i = 1:vfsize %Calculating power output for each triangle face, and compil
     
     pw2 = areas(i)*(h_ground*(newTemp-T_ground)+h_sky*(newTemp-T_sky)+h_air*(newTemp-Tamb));
     
+    %Sum powers and increase index
     m3_powers(i) = pw2;
     
 end
@@ -248,19 +262,19 @@ waitbar(1,progress,'Calculation Complete');
 
 %Check for how many faces have been excluded due to algorithmic errors
 % - delete NaN entries
-[row, col] = find(isnan(powers));
+[row, col] = find(isnan(m1_powers));
 faulty_Powers = length(col);
 if faulty_Powers >= (0.01*length(areas))
     fprintf("WARNING: %3.1f %% of faces have been excluded from M2 power calculation.\n", 100*faulty_Powers/length(areas));
 end
-powers(row,col) = 0;
+m1_powers(row,col) = 0;
 
-[row, col] = find(isnan(sb_powers));
+[row, col] = find(isnan(m2_powers));
 faulty_Powers = length(col);
 if faulty_Powers >= (0.01*length(areas))
     fprintf("WARNING: %3.1f %% of faces have been excluded from SB power calculation.\n", 100*faulty_Powers/length(areas));
 end
-sb_powers(row,col) = 0;
+m2_powers(row,col) = 0;
 
 [row, col] = find(isnan(m3_powers));
 faulty_Powers = length(col);
@@ -269,18 +283,11 @@ if faulty_Powers >= (0.01*length(areas))
 end
 m3_powers(row,col) = 0;
 
-[row, col] = find(isnan(powers_b));
-faulty_Powers = length(col);
-if faulty_Powers >= (0.01*length(areas))
-    fprintf("WARNING: %3.1f %% of faces have been excluded from M3 power calculation.\n", 100*faulty_Powers/length(areas));
-end
-powers_b(row,col) = 0;
 
 %Sum matrices of power output
-RadiativePower = sum(powers); %Radiated power from heat loss in W
-RadiativePower_SB = sum(sb_powers); %Radiated power from heat loss in W (by stephan boltzmann law)
+RadiativePower_M1 = sum(m1_powers); %Radiated power from heat loss in W (by stephan boltzmann law)
+RadiativePower_M2 = sum(m2_powers); %Radiated power from heat loss in W
 RadiativePower_M3 = sum(m3_powers); %Radiated power from heat loss in W (by Model 3)
-RadiativePower_b = sum(powers_b); %Radiated power from heat loss in W (by Model 3)
 tot_area = sum(sum(areas));
 d6 = toc;
 
@@ -289,17 +296,16 @@ output =  table('Size',[4 2],'VariableTypes',{'string','double'});
 output{1,1} = obj_file;
 output{2,1} = texture_file;
 output{3,1} = "Total Area (m^2)";                   output{3,2} = tot_area;
-output{4,1} = "Radiative Power (kW - Model 2)"; output{4,2} = RadiativePower/1000;
-output{5,1} = "Radiative Power (kW - S.B. Law)";    output{5,2} = RadiativePower_SB/1000;
+output{4,1} = "Radiative Power (kW - Model 1)"; output{4,2} = RadiativePower_M1/1000;
+output{5,1} = "Radiative Power (kW - Model 2)";    output{5,2} = RadiativePower_M2/1000;
 output{6,1} = "Radiative Power (kW - Model 3)";    output{6,2} = RadiativePower_M3/1000;
-output{7,1} = "Radiative Power (kW - Model 2b)";    output{7,2} = RadiativePower_b/1000;
-output{8,1} = "Total Calculation Time (s)";         output{8,2} = d6;
-output{9,1} = "Scaling Factor";                     output{9,2} = mult;
-output{10,1} = "Low Temperature (C)";                output{10,2} = toLow;
-output{11,1} = "High Temperature (C)";               output{11,2} = toHigh;
-output{12,1} = "Ambient Temp (C)";                  output{12,2} = Tamb-273.15;
-output{13,1} = "Emissivity";                        output{13,2} = Emissivity;
-output{14,1} = "Wall Angle (radians)";              output{14,2} = wall_ang;
-output{15,1} = "Dew Point Temp (C)";                output{15,2} = T_dew_point-273.15;
-output{16,1} = "Ground Temp (C)";                   output{16,2} = T_ground-273.15;
+output{7,1} = "Total Calculation Time (s)";         output{7,2} = d6;
+output{8,1} = "Scaling Factor";                     output{8,2} = mult;
+output{9,1} = "Low Temperature (C)";                output{9,2} = toLow;
+output{10,1} = "High Temperature (C)";               output{10,2} = toHigh;
+output{11,1} = "Ambient Temp (C)";                  output{11,2} = Tamb-273.15;
+output{12,1} = "Emissivity";                        output{12,2} = Emissivity;
+output{13,1} = "Wall Angle (radians)";              output{13,2} = wall_ang;
+output{14,1} = "Dew Point Temp (C)";                output{14,2} = T_dew_point-273.15;
+output{15,1} = "Ground Temp (C)";                   output{15,2} = T_ground-273.15;
 end
