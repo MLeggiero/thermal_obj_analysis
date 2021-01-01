@@ -44,7 +44,7 @@ B. Analysis Parameters
 - *Ground Temperature:*
 - *Dew Point Temperature:*
 - *Emissivity:*
-- */*Wall Angle:*
+- **Wall Angle:*
 
 
 ### **5. Other Important Notes**
