@@ -39,13 +39,14 @@ A. File Selection
 
 B. Analysis Parameters
 *For important information on how these parameters can be obtained, please refer to the article associated with this software: <Include full reference to article here>*
-- *Hottest Temperature:* 
-- *Coldest Temperature:*
-- *Ambient Temperature:*
-- *Ground Temperature:*
-- *Dew Point Temperature:*
-- *Emissivity:*
-- **Wall Angle:*
+     
+- *Hottest Temperature:* In Celcius - The highest temperature represented in the thermal imagery used to generate the thermal OBJ model.
+- *Coldest Temperature:* In Celcius - The lowest temperature represented in the thermal imagery used to generate the thermal OBJ model.
+- *Ambient Temperature:* In Celcius - Average temperature of the air surrounding the analyzed structure while measurements are made.
+- *Ground Temperature:* In Celcius - Average temperature of the ground surface surrounding the analyzed structure while measurements are made.
+- *Dew Point Temperature:* Dew point temperature of the ambient air surrounding the structure at the time of measurement.
+- *Emissivity:* Average emissivity of the surfaces of the structure.
+-* *Wall Angle:* The average angle between the wall (of the structure being analyzed) and the ground immediately next to the structure.
 
 
 ### **5. Other Important Notes**
