@@ -38,7 +38,8 @@ A. File Selection
 - Next select 'Output Folder' and find the folder which you wish the results of the radiative heat loss analysis to be stored upon completed. Results will be tabulated in an excel spreadsheet with the same name as the OBJ file.
 
 B. Analysis Parameters
-- *Hottest Temperature:*
+*For important information on how these parameters can be obtained, please refer to the article associated with this software: <Include full reference to article here>*
+- *Hottest Temperature:* 
 - *Coldest Temperature:*
 - *Ambient Temperature:*
 - *Ground Temperature:*
