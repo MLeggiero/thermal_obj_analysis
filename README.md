@@ -1,5 +1,5 @@
 # thermal_obj_analysis
- Copyright (C) 2020  Mark Leggiero
+     Copyright (C) 2020  Mark Leggiero
  
      This program is free software: you can redistribute it and/or modify
      it under the terms of the GNU General Public License as published by
@@ -49,4 +49,4 @@ B. Analysis Parameters
 
 ### **5. Other Important Notes**
 
-- The software is set to utilize the multi-core functionality of MATLAB. If the user desires not to have this functionality, on line 208 of 'radiative_output_calculator.m', edit the 'parfor' loop to 'for'.
+- The software is set to utilize the parallel processing functionality of MATLAB. If the user desires _not_ to have the software utilize multiple cores when running, on line 208 of 'radiative_output_calculator.m', replace the 'parfor' loop with 'for'.
