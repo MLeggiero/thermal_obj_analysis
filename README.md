@@ -25,13 +25,13 @@ software:
 
 ----- SOFTWARE GUIDE -----
 
-***Important background information on OBJ file analysis such as the measurements
+*Important background information on OBJ file analysis such as the measurements
 to be made (which are input into the VAMPIRE Tools software) and how these
 measurements should be preprocessed. If more detailed help is needed, you can 
-contact the author at mleggiero@gatech.edu***
+contact the author at mleggiero@gatech.edu
 
-1. Creating Correct File Directories
+**1. Creating Correct File Directories
  a. 
  
-2. Operating the Vampire Tools GUI
+**2. Operating the Vampire Tools GUI
  a. 
