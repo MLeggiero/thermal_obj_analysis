@@ -19,7 +19,7 @@ We hope this software proves beneficial to your research. While not required by 
 
 <Include full reference to article here>
 
-   Thank you!  :)
+   Thank you!          :+1:
 
 ## **SOFTWARE GUIDE**
 
