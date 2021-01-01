@@ -32,9 +32,19 @@ We hope this software proves beneficial to your research. While not required by 
  
 ### **2. Operating the Vampire Tools GUI**
 
-- First, select the 'OBJ File' button on the top of the GUI, which will allow you to select the thermal OBJ file being analyzed.
+A. File Selection
+- First, select the 'OBJ File' button on the top of the GUI, which will open the file explorer and allow you to select the thermal OBJ file being analyzed.
 - Select the 'Texture File' button, and select the thermal texture file associated with the OBJ file.
-- 
+- Next select 'Output Folder' and find the folder which you wish the results of the radiative heat loss analysis to be stored upon completed. Results will be tabulated in an excel spreadsheet with the same name as the OBJ file.
+
+B. Analysis Parameters
+- *Hottest Temperature:*
+- *Coldest Temperature:*
+- *Ambient Temperature:*
+- *Ground Temperature:*
+- *Dew Point Temperature:*
+- *Emissivity:*
+- */*Wall Angle:*
 
 
 ### **5. Other Important Notes**
