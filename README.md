@@ -27,8 +27,10 @@ M. Leggiero, et al., Radiative Heat Loss Estimation of Building Envelopes based 
 
 ### **1. Installation and Use**
 
-- The VAMPIRE Tools software can be used as downloaded (no installation process required), and is proven fully functional when used with the MATLAB R2020a environment. To begin, open 'VAMPIRE_Tools.mlapp'.
+- The VAMPIRE Tools software can be used as downloaded (no installation process required, and with the exception of the external download below), and is proven fully functional when used with the MATLAB R2020a environment.
+- Download “readOBJ.m” from https://www.mathworks.com/matlabcentral/fileexchange/18957-readobj and include it in the directory for VAMPIRE Tools
 - OBJ files (along with associated texture image file) must be stored in the same directory as the VAMPIRE Tools application and other relevant files. It is most convienient to store relevant OBJ files in folders within this directory, and copy/paste the OBJ and texture file into the main directory for analysis. Then use the file's designated original folder as the output folder when results are generated.
+- To begin, open 'VAMPIRE_Tools.mlapp'.
  
 ### **2. Operating the VAMPIRE Tools GUI**
 
