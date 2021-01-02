@@ -30,7 +30,7 @@ We hope this software proves beneficial to your research. While not required by 
 - The VAMPIRE Tools software can be used as downloaded (no installation process required), and is proven fully functional when used with the MATLAB R2020a environment. To begin, open 'VAMPIRE_Tools.mlapp'.
 - OBJ files (along with associated texture image file) must be stored in the same directory as the VAMPIRE Tools application and other relevant files. It is most convienient to store relevant OBJ files in folders within this directory, and copy/paste the OBJ and texture file into the main directory for analysis. Then use the file's designated original folder as the output folder when results are generated.
  
-### **2. Operating the Vampire Tools GUI**
+### **2. Operating the VAMPIRE Tools GUI**
 
 A. File Selection
 - First, select the 'OBJ File' button on the top of the GUI, which will open the file explorer and allow you to select the thermal OBJ file being analyzed.
@@ -52,8 +52,13 @@ B. Analysis Parameters
 
 ### **3. Analysis and Output**
 
-
+- 'Run Analysis' will begin the analysis of the OBJ file. Below the various progress bars are explained:
+     - 'Creating Face/Texture/Vertex Vectors...' will be displayed when the OBJ file is being read and converted into a Matlab matrix and manipulated. The progress bar will show 75% completed during the major portion of the calculation, and will appear to not progress; the progress bar is not dynamic to increase computational speed. 
+     - 'Calculation Complete' will show when the analysis is over.
+     
+- The results of the calculation will be displayed in the GUI window and in the excel spreadsheet saved in the output folder (which also contains the input parameters used).
 
 ### **4. Other Important Notes**
 
 - The software is set to utilize the parallel processing functionality of MATLAB. If the user desires _not_ to have the software utilize multiple cores when running, on line 208 of 'radiative_output_calculator.m', replace the 'parfor' loop with 'for'.
+- 
