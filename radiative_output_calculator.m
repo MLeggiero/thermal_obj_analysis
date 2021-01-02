@@ -15,6 +15,17 @@ function output = radiative_output_calculator(obj_file, texture_file, parameters
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 %
+%
+% We hope this software proves beneficial to your research. While not
+% required by the license, if you use this software in your research, we 
+% hope you will consider citing the original article associated with the
+% software:
+% <Include full reference to article here>
+%
+%   Thank you!  :)
+
+%
+%
 % INPUTS:
 %
 % obj_file
@@ -133,7 +144,7 @@ m1_powers = zeros(1, vfsize);
 m2_powers = zeros(1, vfsize);
 m3_powers = zeros(1, vfsize);
 
-waitbar(0.75,progress, 'Creating Face/Texture/Vertex Vectors...');
+waitbar(0.5,progress, 'Creating Face/Texture/Vertex Vectors...');
 
 %Creates vetor which contains temperature by vertex
 temps = zeros(verts,1);
@@ -187,7 +198,7 @@ for i = (1:verts)
     temp1 = (meanDigNum) * (toHigh - toLow) / (255) + toLow + 273.15;
     temps(i,1) = temp1;
 end
-waitbar(1,progress, 'Creating Face/Texture/Vertex Vectors...');
+waitbar(0.75,progress, 'Creating Face/Texture/Vertex Vectors...');
 
 %scale C parameters to K
 Tamb = Tamb + 273.15;
