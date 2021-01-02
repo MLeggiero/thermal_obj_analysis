@@ -1,4 +1,4 @@
-# vampire
+# VAMPIRE Tools
      Copyright (C) 2020  Mark Leggiero
  
      This program is free software: you can redistribute it and/or modify
