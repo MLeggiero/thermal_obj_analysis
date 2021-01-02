@@ -56,9 +56,9 @@ B. Analysis Parameters
      - 'Creating Face/Texture/Vertex Vectors...' will be displayed when the OBJ file is being read and converted into a Matlab matrix and manipulated. The progress bar will show 75% completed during the major portion of the calculation, and will appear to not progress; the progress bar is not dynamic to increase computational speed. 
      - 'Calculation Complete' will show when the analysis is over.
      
-- The results of the calculation will be displayed in the GUI window and in the excel spreadsheet saved in the output folder (which also contains the input parameters used).
+- The results of the calculation will be displayed in the GUI window and in the excel spreadsheet saved in the output folder (which also contains the input parameters used). For an explanation of the 3 Models presented, please view the article associated with the software.
 
 ### **4. Other Important Notes**
 
 - The software is set to utilize the parallel processing functionality of MATLAB. If the user desires _not_ to have the software utilize multiple cores when running, on line 208 of 'radiative_output_calculator.m', replace the 'parfor' loop with 'for'.
-- 
+- The 'Preview OBJ' button will open a figure which displays the geometry of the OBJ being analyzed (untextured) in a Matlab 3D graph.
