@@ -38,6 +38,7 @@ A. File Selection
 - Next select 'Output Folder' and find the folder which you wish the results of the radiative heat loss analysis to be stored upon completed. Results will be tabulated in an excel spreadsheet with the same name as the OBJ file.
 
 B. Analysis Parameters
+
 *For important information on how these parameters can be obtained, please refer to the article associated with this software: <Include full reference to article here>*
      
 - *Hottest Temperature:* In Celcius - The highest temperature represented in the thermal imagery used to generate the thermal OBJ model.
@@ -49,7 +50,7 @@ B. Analysis Parameters
 - *Wall Angle:* The average angle between the wall (of the structure being analyzed) and the ground immediately next to the structure.
      - *Wall Angle* will only be an option if *Use Global Angle* is checked. If not checked, the software will calculate the angle of the OBJ model faces with respect to the ground plane (defined by local OBJ coordinates). This method is more accurate if the ground plane is correctly defined when the model is oriented (and local coordinated redefined) with software such as [Blender](https://www.blender.org/).
 
-### **3. **
+### **3. Maybe**
 
 ### **4. Other Important Notes**
 
