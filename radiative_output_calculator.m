@@ -20,7 +20,10 @@ function output = radiative_output_calculator(obj_file, texture_file, parameters
 % required by the license, if you use this software in your research, we 
 % hope you will consider citing the original article associated with the
 % software:
-% <Include full reference to article here>
+%
+% M. Leggiero, et al., Radiative Heat Loss Estimation of Building Envelopes
+% based on 3DThermographic Models Utilizing Small Unmanned Aerial
+% Systems (sUAS) (2021)
 %
 %   Thank you!  :)
 
