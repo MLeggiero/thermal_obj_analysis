@@ -46,9 +46,11 @@ B. Analysis Parameters
 - *Ground Temperature:* In Celcius - Average temperature of the ground surface surrounding the analyzed structure while measurements are made.
 - *Dew Point Temperature:* Dew point temperature of the ambient air surrounding the structure at the time of measurement.
 - *Emissivity:* Average emissivity of the surfaces of the structure.
--* *Wall Angle:* The average angle between the wall (of the structure being analyzed) and the ground immediately next to the structure.
+- *Wall Angle:* The average angle between the wall (of the structure being analyzed) and the ground immediately next to the structure.
+     - *Wall Angle* will only be an option if *Use Global Angle* is checked. If not checked, the software will calculate the angle of the OBJ model faces with respect to the ground plane (defined by local OBJ coordinates). This method is more accurate if the ground plane is correctly defined when the model is oriented (and local coordinated redefined) with software such as [Blender](https://www.blender.org/).
 
+### **3. **
 
-### **5. Other Important Notes**
+### **4. Other Important Notes**
 
 - The software is set to utilize the parallel processing functionality of MATLAB. If the user desires _not_ to have the software utilize multiple cores when running, on line 208 of 'radiative_output_calculator.m', replace the 'parfor' loop with 'for'.
